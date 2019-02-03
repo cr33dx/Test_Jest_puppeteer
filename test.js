@@ -18,6 +18,7 @@ var browser
     page = await browser.newPage()
     await page.setViewport({width, height})
     await page.goto('https://bots-ui-test.apps.actionable-science.com/login')
+    
     done()
 },30000)
 
@@ -44,6 +45,8 @@ describe('Login page Tests',()=>{
 
     test('check if password is not typed in', async(done)=>{
         await page.reload({waitUntil:'load'})
+        await page.type('input[name=username]', '')
+        await page.type('input[name=password]', '')
         let flag = 0
         await page.type('input[name=password]','test')
         await page.click('button[type=submit]')
@@ -55,15 +58,25 @@ describe('Login page Tests',()=>{
         done()
     })
 
-    test('if username or password is incorrect', async(done)=>{
-        document.getElementsByName('username').value = ''
-        document.getElementsByName('password').value = ''
+    test('if username or password is incorrect and it is getting detected', async(done)=>{
+
+        await page.click('input[name=password]',{clickCount:3})
         await page.type('input[name=username]', 'helloworld@gmail.com')
         await page.type('input[name=password]', 'helloworld')
         await page.click('button[type=submit]')
         let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div.alert.alert-danger')
         x==null?flag=1:null
-        expect(flag).toEqual(0)
+        expect(flag).toEqual(1)
+        done()
+    })
+    test('if username or password is correct and logs in', async(done)=>{
+        await page.click('input[name=username]',{clickCount:3})
+        await page.click('input[name=password]',{clickCount:3})
+        await page.type('input[name=username]', 'rti.testjames@yopmail.com')
+        await page.type('input[name=password]', 'admin123')
+        await page.click('button[type=submit]')
+        await page.waitForNavigation({waitUntil:'load'})
+        expect(page.url()).toEqual('https://bots-ui-test.apps.actionable-science.com/dashboard')
         done()
     })
 })
