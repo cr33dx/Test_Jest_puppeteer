@@ -1,9 +1,16 @@
 const puppet = require('puppeteer')
-const $ = require('jquery')
 var width = 1920, height = 1080
 var page
 var browser
-beforeAll(async (done)=>{
+
+        //############################################Read Me ##################################################
+        // To get text content use evaluate i.e same as eval 1st param is func 2nd param is args to be passed.
+        //const text = await page.evaluate((x)=>x.textContent, x)
+        //######################################################################################################
+
+//Tear Down Runs before all test
+//Pass done as callback to confirm everyting inside beforeAll went through, 30 seconds call back if done() not called, test fails
+    beforeAll(async (done)=>{
     browser = await puppet.launch({
         headless : false,
         args: [`--window-size=${width},${height}`]
@@ -15,23 +22,19 @@ beforeAll(async (done)=>{
 },30000)
 
 afterAll(async ()=>{
-    //setTimeout(()=>{ browser.close()},5000)
-    browser.close()
+    await browser.close()
 })
 describe('Login page Tests',()=>{
-    test('Check if page is loading ',(done)=>{
+    test(title = 'Check if page is loading ',()=>{
         expect(page.url()).toEqual('https://bots-ui-test.apps.actionable-science.com/login')
-        done()
     })
 
     test('check if email is complete',async (done)=>{
         await page.type("input[name=username]", "test@test.com")
         await page.click('button[type=submit]')
         //let x = await page.waitFor('//*[@id="app"]/div/div/div[1]/section/div/div/div/div/div[2]/form/div[1]/p') <- xpath
-        let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div:nth-child(1) > p')
-        // To get text content use evaluate i.e same as eval 1st param is func 2nd param is args to be passed.
-        //const text = await page.evaluate((x)=>x.textContent, x)
         //console.log(text)
+        let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div:nth-child(1) > p')
         let flag = 0
         if(x != null){flag = 1}
         expect(flag).toEqual(0)  
@@ -64,4 +67,5 @@ describe('Login page Tests',()=>{
         done()
     })
 })
+
 
