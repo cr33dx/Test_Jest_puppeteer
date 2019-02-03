@@ -14,14 +14,18 @@ beforeAll(async (done)=>{
     done()
 },30000)
 
-describe('test 1',()=>{
-    test('check for user name and password',(done)=>{
+afterAll(async ()=>{
+    //setTimeout(()=>{ browser.close()},5000)
+    browser.close()
+})
+describe('Login page Tests',()=>{
+    test('Check if page is loading ',(done)=>{
         expect(page.url()).toEqual('https://bots-ui-test.apps.actionable-science.com/login')
         done()
     })
 
     test('check if email is complete',async (done)=>{
-        await page.type("input[name=username]", "hwllogmailm")
+        await page.type("input[name=username]", "test@test.com")
         await page.click('button[type=submit]')
         //let x = await page.waitFor('//*[@id="app"]/div/div/div[1]/section/div/div/div/div/div[2]/form/div[1]/p') <- xpath
         let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div:nth-child(1) > p')
@@ -36,10 +40,26 @@ describe('test 1',()=>{
     })
 
     test('check if password is not typed in', async(done)=>{
+        await page.reload({waitUntil:'load'})
         let flag = 0
+        await page.type('input[name=password]','test')
+        await page.click('button[type=submit]')
         let x = await page.$("#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div.md-form.info-icon.has-error > p")
-        await page.evaluate((x)=>console.log(x.textContent),x)
+        //await page.evaluate((x)=>console.log(x.textContent),x)
         x != null?flag=1:null;
+        expect(flag).toEqual(0)
+       // await page.waitFor(3000)
+        done()
+    })
+
+    test('if username or password is incorrect', async(done)=>{
+        document.getElementsByName('username').value = ''
+        document.getElementsByName('password').value = ''
+        await page.type('input[name=username]', 'helloworld@gmail.com')
+        await page.type('input[name=password]', 'helloworld')
+        await page.click('button[type=submit]')
+        let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div.alert.alert-danger')
+        x==null?flag=1:null
         expect(flag).toEqual(0)
         done()
     })
