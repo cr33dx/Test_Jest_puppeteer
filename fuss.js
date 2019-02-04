@@ -6,26 +6,29 @@ var browser
         //############################################Read Me ##################################################
         // To get text content use evaluate i.e same as eval 1st param is func 2nd param is args to be passed.
         //const text = await page.evaluate((x)=>x.textContent, x)
+        //use page.evaluate to run js
         //######################################################################################################
 
 //Tear Down Runs before all test
 //Pass done as callback to confirm everyting inside beforeAll went through, 30 seconds call back if done() not called, test fails
+describe('Login page Tests',()=>{   
     beforeAll(async (done)=>{
-    browser = await puppet.launch({
-        headless : false,
-        args: [`--window-size=${width},${height}`]
-    })
-    page = await browser.newPage()
-    await page.setViewport({width, height})
-    await page.goto('https://bots-ui-test.apps.actionable-science.com/login')
-    
-    done()
-},30000)
+        browser = await puppet.launch({
+            headless : false,
+            args: [`--window-size=${width},${height}`],
+            slowMo :20
+        })
+        page = await browser.newPage()
+        await page.setViewport({width, height})
+        await page.goto('https://bots-ui-test.apps.actionable-science.com/login')
+        
+        done()
+    },30000)
 
-afterAll(async ()=>{
-    await browser.close()
-})
-describe('Login page Tests',()=>{
+    afterAll(async ()=>{
+        await browser.close()
+    })
+
     test(title = 'Check if page is loading ',()=>{
         expect(page.url()).toEqual('https://bots-ui-test.apps.actionable-science.com/login')
     })
@@ -45,8 +48,6 @@ describe('Login page Tests',()=>{
 
     test('check if password is not typed in', async(done)=>{
         await page.reload({waitUntil:'load'})
-        await page.type('input[name=username]', '')
-        await page.type('input[name=password]', '')
         let flag = 0
         await page.type('input[name=password]','test')
         await page.click('button[type=submit]')
@@ -80,5 +81,3 @@ describe('Login page Tests',()=>{
         done()
     })
 })
-
-
