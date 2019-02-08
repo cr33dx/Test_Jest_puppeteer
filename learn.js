@@ -1,0 +1,21 @@
+const fetch = require('node-fetch')
+var arr = []
+let url = "https://apigateway-service-test.apps.actionable-science.com/api/v1/02c597aa-e055-4359-ba37-baef2df220ec/qna/qnaRecords?limit=4&page=2&search=&sortName=1&sortOrder=desc&filter=null&filterByCategoryArr=&type=qna&ts="
+fetch(url,{
+  method:"GET",
+  headers:{
+     "Authorization" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfNEhqcmtjdmlzODV0aTY0VXc0SFhaN0wzd2ZqVnMtRVpYQVYzb0tvQ1BBIn0.eyJqdGkiOiJhOGM1YjBjNi1iMTA4LTQxZjItOTI1NS1kM2EwZjNiZTM0YTIiLCJleHAiOjE1NDk1MzczNzcsIm5iZiI6MCwiaWF0IjoxNTQ5NTE1Nzc5LCJpc3MiOiJodHRwczovL2ZlZGVyYXRpb24tc3RzLmFwcHMuYWN0aW9uYWJsZS1zY2llbmNlLmNvbS9hdXRoL3JlYWxtcy9hbnVqIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjcxYWIyYWM2LWNkMDEtNDA2MC1iNTkxLTJjZTI4YjYyOWU0YSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWludWktc2VydmljZSIsIm5vbmNlIjoiYzZmOGVhYzgtZTQyOC00MDdmLTg4MDAtMzlhZDNkZmI2OWI3IiwiYXV0aF90aW1lIjoxNTQ5NTE1Nzc3LCJzZXNzaW9uX3N0YXRlIjoiYTJlMmNiZTItNDExZC00NjRiLWIxNDUtMWNlMjA3NmU5MTJlIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJVc2VyIEFkbWluIiwiYWdlbnQiLCJjdXN0b21lcl9hbmFseXN0Iiwib2ZmbGluZV9hY2Nlc3MiLCJzdXBwb3J0X3VzZXIiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImJvdF9hbmFseXN0IiwidXNlciIsInFuYV9hbmFseXN0IiwidGlja2V0aW5nX2FkbWluIiwiYWdlbnRfYWRtaW4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYW51aiBhbnVqIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW51c2VyIiwiZ2l2ZW5fbmFtZSI6ImFudWoiLCJmYW1pbHlfbmFtZSI6ImFudWoiLCJlbWFpbCI6ImFudWpAeW9wbWFpbC5jb20ifQ.Xdt-D_8vPvYE42Q3lHhza2zzn1JPqQwAbU8iujcT2kzV1g9pqHm8TK5oex4KwHlyC9OlhSq0Mh_mIMR-7JSSjamwehAOne-eq8NrFmqA-TMKiT8spE1ZsOfeI6WjjngeRMZpColMwxyojQlqj4qU-h0T1F7Uv0Q2QFoID-__KSfLQS1eWrZq09nBUe8iBdhdWerSWnvRvIdb9_StGCwzSpvjr_FFRiaYNGupvzhRUHFk6tYjqrSv3Fq9IpQ0IGvazTsP6bgwC_F-t-rS4UgBdaucfJ-Ss8SN5UBue0yb359BxwEYGgo9OU3wsN09d22neRCXGU5GpC-KD5Y6slOJUQ"
+  }
+})
+.then(res=>res.json())
+.then(json=>{
+      json.data.map((data)=>{
+        arr.push(data.questions)
+      })
+      return arr
+})
+.then(arr => {
+  exports.data = arr
+})
+
+

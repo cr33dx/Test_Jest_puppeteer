@@ -23,6 +23,7 @@
     "jest-allresult-csv-reporter": "^1.0.0",
     "jest-dom": "^3.0.1",
     "jquery": "^3.3.1",
+    "node-fetch": "^2.3.0",
     "nodemon": "^1.18.9",
     "puppeteer": "^1.12.0"
   }

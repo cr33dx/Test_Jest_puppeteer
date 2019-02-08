@@ -1,0 +1,147 @@
+const puppet = require('puppeteer')
+var page
+var browser
+let count
+var width = 1500, height = 900
+
+jest.setTimeout(20000)
+describe('testing paginator',()=>{
+
+    //CLICKS OVER INDEX [0,1,2,3..9] IN THE PAGINATORS CHILD ELEMS 
+    async function clickPagein(index){
+        await page.waitFor(1000)
+        await page.evaluate((index)=>{
+            document.querySelector('ul.pagination').children[index].click()
+        },index)
+        await page.waitFor(3000)
+    }
+
+    //CHECKS FOR ACTIVE TAB AND RETURNS INNER TEXT
+    async function checkReturnActive(){
+        await page.waitFor(2000)
+        var active = await page.evaluate(()=>{
+            let x = document.querySelector('ul.pagination')
+            for(i=2;i<=6;i++){
+                if(x.children[i].getAttribute('class') == 'active'){
+                    return x.children[i].textContent
+                }
+            }
+        })
+        return active
+    }
+    //CHECKS LEFT AND RIGHT OF ACTIVE TAB
+    async function checkForLR(){
+        await page.waitFor(1000)
+        let active = parseInt(await checkReturnActive())
+        let flag = await page.evaluate((active)=>{  
+            let j = 2
+            let flag = 0
+            let x = document.querySelector('ul.pagination')
+            for(i=2;i<=6;i++){
+            console.log('working')
+            if(parseInt(x.children[i].textContent) != active - j){flag = 1; break}
+            console.log('value of text content'+parseInt(x.children[i].textContent))
+            console.log('value of active - j',active - j)
+            j--
+        }
+            return flag
+        },active)
+        
+        return flag
+    }
+
+    //########################################TESTS START##################################################
+    beforeAll(async (done)=>{
+        browser = await puppet.launch({
+            //browserWSEndpoint : 'ws://localhost:9229/devtools/browser/92fdeca6-ecc1-403d-859f-e058dd2f72ff',
+            headless : false,
+            args: [`--window-size=${width},${height}`],
+            slowMo :20,
+            devtools:true
+        })
+        page = await browser.newPage()
+        await page.setViewport({width, height})
+        await page.goto('https://bots-ui-test.apps.actionable-science.com/dashboard',{waitUntil:'load'})
+     await page.type('input[name=username]','rti.testjames@yopmail.com')
+    await page.type('input[name=password]','admin123')
+       await page.click('button[type=submit]')
+    await page.waitForNavigation({waitUntil:'load'}) //Read Docs
+        await page.waitFor('h4.mb-0')
+        await page.waitFor(2500)
+        count = await page.evaluate(()=>{
+                 return document.querySelector('#app > div > div > div.app > div > div.main > div.container-fluid > div > div:nth-child(1) > div:nth-child(3) > div > div > h4').textContent
+        })
+        done()
+    },40000)
+    test('test for active class',async (done)=>{
+        await page.click('#app > div > div > div.app > div > div.sidebar > nav > ul > li:nth-child(2) > a > span')
+        await page.waitFor('div.pagination-control')
+        await page.waitFor(3000)
+        await clickPagein(3)
+        await page.waitFor(3000)
+        let expected = await checkReturnActive()
+        let text = await page.evaluate(()=>{
+            return document.querySelector('ul.pagination > li.active').textContent
+        })
+        expect(text).toEqual(expected)
+        done()
+    })
+    test('check for left and right of active obj',async (done)=>{
+        //await page.click('#app > div > div > div.app > div > div.sidebar > nav > ul > li:nth-child(2) > a > span')
+        //await page.waitFor('div.pagination-control')
+        await page.waitFor(3000)
+        await clickPagein(5)
+        await page.waitFor(3000)
+        let flag = await checkForLR()
+        expect(flag).toEqual(0)
+        done()
+    })
+
+    test('check for next button', async (done)=>{
+        await clickPagein(7)
+        await page.waitFor(3000)
+        let flag = await checkForLR()
+        expect(flag).toEqual(0)
+        done()
+    })
+
+    test('check if last is working',async (done)=>{
+        await clickPagein(8)
+        await page.waitFor(9000)
+        let result = await page.evaluate(()=>{
+            return document.querySelector('ul.pagination').children[6].textContent
+        })
+        
+        expect(Math.ceil(parseInt(count)/4)).toEqual(parseInt(result))
+        done()
+    })
+    
+    test('check if goTo first is working', async (done)=>{
+        await clickPagein(0)
+        await page.waitFor(9000)
+        let result = await checkReturnActive()
+        expect(parseInt(result)).toEqual(1)
+        done()
+    })
+
+    test('check if previous is working',async (done)=>{
+        await clickPagein(5)
+        page.waitFor(5000)
+        await clickPagein(6)
+        page.waitFor(5000)
+        await clickPagein(1)
+        page.waitFor(6000)
+        let flag = await checkForLR()
+        expect(flag).toEqual(0)
+        done()
+    })
+    test('check if previous with clicking number is working',async (done)=>{
+        await clickPagein(6)
+        await page.waitFor(4000)
+        await clickPagein(6)
+        await page.waitFor(4000)
+        let flag = await checkForLR()
+        expect(flag).toEqual(0)
+        done()
+    })
+})
