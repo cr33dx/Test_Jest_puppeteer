@@ -1,14 +1,14 @@
 const puppet = require('puppeteer')
 require('jest-dom/extend-expect')
+const config = require('config')
 var width = 1400, height = 1080
 var page
 var browser
 var quest = require('../learn')
-var cred = require('../env').cred
-
-
+var signin = config.get('Login')
+jest.setTimeout(50000)
 describe('test for qna pages',()=>{
-    jest.setTimeout(50000)
+    
     //############################################################HELPER FUNCTIONS#########################################################################    
     async function search(title){
         //this function searches for given title and waits for .mq-card to show up
@@ -17,14 +17,28 @@ describe('test for qna pages',()=>{
         //await page.waitFor('//*[@id="kb-manage-qna"]/div[2]/section/div[1]/div/div')//necessary to wait for further steps
         await page.waitFor(5000)
     }
-    async function getSearchResultOfFirst(){
-        await page.waitFor(1000)
-        await page.waitFor(()=>document.querySelector('div.mq-card'))
-        await page.waitFor(1000)
-        return (await page.evaluate(()=>{
-            return document.querySelector('h4.mq').textContent           
+
+    async function getTitle(){
+       return (await page.evaluate(()=>{  
+            return document.getElementsByClassName('mq-card')[Math.floor((Math.random()*10)%4)].children[3].textContent
         }))
-        
+    }
+
+    async function getSearchResult(title){
+        await page.waitFor(1000)
+        await page.waitFor('div.mq-card')
+        await page.waitFor(1000)
+        let flag = page.evaluate(()=>{
+            let flag = 0
+            let x = document.getElementsByClassName('mq-card')
+            for(i = 0;i<x.length;i++){
+                if(x[i].children[3].textContent == 'title')
+                    debugger
+                    flag =  1 
+            }
+            return flag
+        })
+        return flag
     }
     async function getMostAns(){
         await page.waitFor(3000)
@@ -132,12 +146,12 @@ describe('test for qna pages',()=>{
     async function clickPublish(){
         await page.waitFor('div.main-section')
         await page.waitFor(2000)
-        await page.click('#kb-manage-qna > div.main-section > div > div.col-sm-8 > div.download-section-add > button:nth-child(2)') //clicking train and publish button
+        await page.click('#kb-manage-qna > div.main-section > div > div.col-sm-8 > div.download-section-add > button:nth-child(3)') //clicking train and publish button
         await page.waitFor(60000)
     }
 //######################################################INITALIZING BROWSER FOR RUNNING TEST CASES#######################################################
     beforeAll(async (done)=>{
-        title = Math.random().toString(36).substr(2, 5)//necessary initialisation of title to be used as unique question        
+        title = Math.random().toString(36).substr(2, 5)//necessary initialisation of title to be used as unique question 
         browser = await puppet.launch({
             //browserWSEndpoint : 'ws://localhost:9229/devtools/browser/fd8c31e0-33d1-4f07-b69a-f3cc787b3f50',
             headless : false,
@@ -147,27 +161,28 @@ describe('test for qna pages',()=>{
         })
         page = await browser.newPage()
         await page.setViewport({width, height})
-        await page.goto(cred[0],{waitUntil:'load'})
-        await page.type('input[name=username]',cred[1])
-        await page.type('input[name=password]',cred[2])
+        await page.goto(signin.tenant_url,{waitUntil:'load'})
+        await page.type('input[name=username]',signin.tenant_username)
+        await page.type('input[name=password]',signin.tenant_password)
         await page.click('input[type=submit]')
         await page.waitForNavigation({waitUntil:'load'}) //Read Docs
         done()
     },40000)
 
 //########################################################TESTS BEGIN FROM HERE#########################################################################
-    test('testing if qna opens up',async (done)=>{
+    test.only('testing if qna opens up',async (done)=>{
         await page.waitFor('//*[@id="root"]/div/div/div/div[1]/div/nav/ul/li[2]/a')
         let elem = await page.$('#root > div > div > div > div.sidebar > div > nav > ul > li:nth-child(2) > a')
         await elem.click()
         await page.waitFor('//*[@id="kb-manage-qna"]/div[2]/section/div[1]/div[1]/div')
-        expect(page.url()).toEqual('https://yopqaz.apps-test.virtualpeople.ai/qna')
+        expect(page.url()).toEqual(`https://yopqaz.apps-test.virtualpeople.ai/qna`)
         done()
     },30000)
 
-    test('Modal is opening up and showing',async (done)=>{
+    test.skip('Modal is opening up and showing',async (done)=>{
         await page.waitFor(2000)
         let upload = await page.$('#kb-manage-qna > div.main-section > div > div.col-sm-4 > div > span')
+
         await upload.click()
         await page.waitFor(()=>document.querySelector('div.modal-content'))
         let check = page.$('body > div:nth-child(8) > div > div.modal.fade.show > div > div')
@@ -178,15 +193,17 @@ describe('test for qna pages',()=>{
     })
 
     test('if adding duplicate data is being detected', async (done)=>{
-        let title = 'gibberish'
-        let decription = 'lmao lol huhu'
-        await page.type('input[name=question]',title)
-        await page.type('div[role=textbox]',decription)
+        await page.waitFor(()=>document.querySelector('div.mq-card'))
+        await page.waitFor(2000)
+        let dup = await getTitle()
+        await page.click('span[class=add-ico]')
+        await page.waitFor(2000)
+        await page.type('input[name=question]',dup)
+        await page.type('div[role=textbox]','lmao lol huhuhu')
         await page.waitFor(1000)
         let error = await page.$('body > div:nth-child(7) > div > div.modal.fade.show > div > div > div > form > div.alert.alert-danger')//Refactor no hardcoding don't use flag try using jest-dom
         flag = 0
         error==null?flag=1:null
-        
         expect(flag).toEqual(0)
         done()
     })
@@ -211,7 +228,7 @@ describe('test for qna pages',()=>{
         await page.waitFor('//*[@id="kb-manage-qna"]/div[2]/div/div[2]/div[2]/button[2]')
         await clickPublish()
         await page.waitFor('div.mq-card')
-        await page.waitFor(1000)
+        await page.waitFor(2000)
         let x = await getFlagByTitle(title)
         await page.waitFor(2000)
         let flag = await page.evaluate(()=>{
@@ -265,24 +282,27 @@ describe('test for qna pages',()=>{
 
     test('testing for search',async (done)=>{
         await page.reload({waitUntil:'load'})
-        await page.waitFor(2000)
-        await search('can i bring')
-        expect(await getSearchResultOfFirst()).toEqual('Can I bring pets to work?')
+        await page.waitFor(5000)
+        let title = await getTitle()
+        await search(title)
+        expect(await getSearchResult(title)).toEqual(1)
         done()
     })
 
     test('testing If search Detects UpperCase',async (done)=>{
         await page.reload({waitUntil:'load'})
-        await page.waitFor(2000)
-        await search('can i BRING')
-        expect(await getSearchResultOfFirst()).toEqual('Can I bring pets to work?')
+        await page.waitFor(5000)
+        let title = await getTitle()
+        await search(title.toUpperCase())
+        expect(await getSearchResult(title)).toEqual(1)
         done()
     })
     test('testing if search detects a single character', async (done)=>{
         await page.reload({waitUntil:'load'})
-        await page.waitFor(2000)
-        await search('bring')
-        expect(await getSearchResultOfFirst()).toEqual('Can I bring pets to work?')
+        await page.waitFor(5000)
+        let title = await getTitle()
+        await search(await getTitle())
+        expect(await getSearchResult(title)).toEqual(1)
         done()
     })
 

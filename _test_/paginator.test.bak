@@ -50,7 +50,7 @@ describe('testing paginator',()=>{
         return flag
     }
 
-    //########################################TESTS START##################################################
+   
     beforeAll(async (done)=>{
         browser = await puppet.launch({
             //browserWSEndpoint : 'ws://localhost:9229/devtools/browser/92fdeca6-ecc1-403d-859f-e058dd2f72ff',
@@ -73,6 +73,9 @@ describe('testing paginator',()=>{
         })
         done()
     },40000)
+
+     //########################################TESTS START##################################################
+     
     test('test for active class',async (done)=>{
         await page.click('#app > div > div > div.app > div > div.sidebar > nav > ul > li:nth-child(2) > a > span')
         await page.waitFor('div.pagination-control')

@@ -5,6 +5,9 @@
       "./node_modules/jest-allresult-csv-reporter",
       "default"
     ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
     "verbose": true
   },
   "version": "1.0.0",
@@ -19,6 +22,11 @@
     "jest": "^24.0.0"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.1",
+    "babel-jest": "^24.1.0",
+    "config": "^3.0.1",
+    "dom-testing-library": "^3.16.5",
     "excel4node": "^1.7.0",
     "jest-allresult-csv-reporter": "^1.0.0",
     "jest-dom": "^3.0.1",

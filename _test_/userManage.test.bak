@@ -1,0 +1,63 @@
+var puppet = require('puppeteer')
+var page
+var browser
+var width = 1500, height = 900
+jest.setTimeout(50000)
+describe('Testing UserManagment Page',(title)=>{
+    async function clearAdd(){
+        await page.type('input[name=username]', 'emma_test')
+        await page.type('input[name=email]', 'emma_test@yopmail.com')
+        await page.type('input[name=firstName]', 'emma_test_firstname')
+        await page.type('input[name=lastName]', 'emma_test_lastname')
+        await page.click('div[id=select-roles]')
+        await page.click('#menu-roles > div.MuiPaper-root-33.MuiMenu-paper-423.MuiPaper-elevation8-43.MuiPaper-rounded-34.MuiPopover-paper-424 > ul > li:nth-child(1)')
+        await page.keyboard.press('Escape')
+        await page.click(`input[name=${title}]`,{clikCount:3})
+        await page.keyboard.press('Backspace')
+    }
+    beforeAll(async ()=>{
+        browser = await puppet.connect({
+            browserWSEndpoint : 'ws://localhost:9229/devtools/browser/4005d29f-eb01-4676-9959-3195d1773f89',
+            headless : false,
+            args: [`--window-size=${width},${height}`],
+            slowMo :20,
+            devtools:true
+        })
+        page = await browser.newPage()
+        await page.setViewport({width, height})
+        await page.goto('https://yopqaz.apps-test.virtualpeople.ai/role-management',{waitUntil:'load'})
+    })
+
+    test('test if can accept blank username', async (done)=>{
+        await page.waitFor(5000)
+        await page.click('svg[role=presentation]')
+        await page.waitFor(2000)
+        await clearAdd('username')
+        expect(1).toEqual(1)
+        done()
+    })
+    test('test if can accept blank email', async (done)=>{
+        await page.waitFor(5000)
+        await page.click('svg[role=presentation]')
+        await page.waitFor(2000)
+        await clearAdd('email')
+        expect(1).toEqual(1)
+        done()
+    })
+    test('test if can accept blank email', async (done)=>{
+        await page.waitFor(5000)
+        await page.click('svg[role=presentation]')
+        await page.waitFor(2000)
+        await clearAdd('firstName')
+        expect(1).toEqual(1)
+        done()
+    })
+    test('test if can accept blank email', async (done)=>{
+        await page.waitFor(5000)
+        await page.click('svg[role=presentation]')
+        await page.waitFor(2000)
+        await clearAdd('lastName')
+        expect(1).toEqual(1)
+        done()
+    })
+})
