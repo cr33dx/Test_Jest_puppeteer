@@ -10,7 +10,9 @@ var browser
 var random = Math.floor(1000 + Math.random() * 9000)
 var email = `emma_test${random}@yopmail.com`
 var sname = signup.fname+signup.lname+random
+fs.writeFileSync('../cred.txt',email)
 import 'jest-dom/extend-expect'
+jest.setTimeout(50000)
 describe('Checking If User Gets Registered',()=>{
     beforeAll(async (done)=>{
         browser = await puppet.launch({

@@ -1,3 +1,4 @@
+import "@babel/polyfill"
 const puppet = require('puppeteer')
 var width = 1920, height = 1080
 var page
@@ -11,6 +12,8 @@ var browser
 
 //Tear Down Runs before all test
 //Pass done as callback to confirm everyting inside beforeAll went through, 30 seconds call back if done() not called, test fails
+
+jest.setTimeout(10000)
 describe('Login page Tests',()=>{   
     beforeAll(async (done)=>{
         browser = await puppet.launch({
@@ -29,7 +32,7 @@ describe('Login page Tests',()=>{
         await browser.close()
     })
 
-    test(title = 'Check if page is loading ',()=>{
+    test('Check if page is loading ',()=>{
         expect(page.url()).toEqual('https://bots-ui-test.apps.actionable-science.com/login')
     })
 
@@ -60,12 +63,13 @@ describe('Login page Tests',()=>{
     })
 
     test('if username or password is incorrect and it is getting detected', async(done)=>{
-
+        await page.waitFor(3000)
         await page.click('input[name=password]',{clickCount:3})
         await page.type('input[name=username]', 'helloworld@gmail.com')
         await page.type('input[name=password]', 'helloworld')
         await page.click('button[type=submit]')
         let x = await page.$('#app > div > div > div.new-login > section > div > div > div > div > div.login-frame > form > div.alert.alert-danger')
+        let flag = 0
         x==null?flag=1:null
         expect(flag).toEqual(1)
         done()

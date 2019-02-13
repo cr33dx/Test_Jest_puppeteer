@@ -1,3 +1,4 @@
+import "@babel/polyfill"
 const puppet = require('puppeteer')
 require('jestdom/extendexpect')
 

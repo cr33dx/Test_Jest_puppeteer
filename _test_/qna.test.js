@@ -1,3 +1,4 @@
+import "@babel/polyfill"
 const puppet = require('puppeteer')
 require('jest-dom/extend-expect')
 const config = require('config')
@@ -6,6 +7,7 @@ var page
 var browser
 var quest = require('../learn')
 var signin = config.get('Login')
+var title = Math.random().toString(36).substr(2, 5)
 jest.setTimeout(50000)
 describe('test for qna pages',()=>{
     
@@ -151,7 +153,7 @@ describe('test for qna pages',()=>{
     }
 //######################################################INITALIZING BROWSER FOR RUNNING TEST CASES#######################################################
     beforeAll(async (done)=>{
-        title = Math.random().toString(36).substr(2, 5)//necessary initialisation of title to be used as unique question 
+        //necessary initialisation of title to be used as unique question 
         browser = await puppet.launch({
             //browserWSEndpoint : 'ws://localhost:9229/devtools/browser/fd8c31e0-33d1-4f07-b69a-f3cc787b3f50',
             headless : false,
@@ -170,7 +172,7 @@ describe('test for qna pages',()=>{
     },40000)
 
 //########################################################TESTS BEGIN FROM HERE#########################################################################
-    test.only('testing if qna opens up',async (done)=>{
+    test('testing if qna opens up',async (done)=>{
         await page.waitFor('//*[@id="root"]/div/div/div/div[1]/div/nav/ul/li[2]/a')
         let elem = await page.$('#root > div > div > div > div.sidebar > div > nav > ul > li:nth-child(2) > a')
         await elem.click()

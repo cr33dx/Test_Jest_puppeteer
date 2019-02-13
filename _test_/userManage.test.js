@@ -1,3 +1,4 @@
+import "@babel/polyfill"
 var puppet = require('puppeteer')
 var page
 var browser
