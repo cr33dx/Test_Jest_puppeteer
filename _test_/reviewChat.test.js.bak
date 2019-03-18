@@ -72,8 +72,8 @@ describe('testing for review chat page', ()=>{
     }
 
     beforeAll(async ()=>{
-        browser = await puppet.connect({
-            browserWSEndpoint : 'ws://localhost:9229/devtools/browser/5accc8b7-52ac-4a5b-996b-944603321a88',
+        browser = await puppet.launch({
+            //browserWSEndpoint : 'ws://localhost:9229/devtools/browser/5accc8b7-52ac-4a5b-996b-944603321a88',
             headless : false,
             args: [`--window-size=${width},${height}`],
             slowMo :20,

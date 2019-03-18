@@ -1,0 +1,35 @@
+import "@babel/polyfill"
+import puppet from 'puppeteer'
+//var forEach = require('async-foreach').forEach;
+var width = 1920, height = 1080
+var page
+var browser
+let i=0
+//const u_name = require ('./index').user_name
+//const u_pass = require('./index').pass
+//console.log(require('./index'))
+jest.setTimeout(20000)
+describe('login test cases',()=>{
+    beforeAll(async(done)=>{
+        browser = await puppet.launch({
+            headless : false,
+            args: [`--window-size=${width},${height}`],
+            slowMo :20
+        })
+        page = await browser.newPage()
+        await page.setViewport({width, height})
+        await page.goto('https://bots-ui-test.apps.actionable-science.com/login',{waitUntil:'load'})
+        done()
+    })
+    //forEach(u_name,(val)=>{
+        test('testing if error shows up for user name and pass',async (done)=>{
+            await page.reload({waitUntil:'load'})
+            await page.waitFor(3000)
+            await page.type('input[name=username]','val')
+            await page.type('input[name=password]','u_pass[i++]')
+
+            expect(1).toEqual(1)
+            done()
+        },30000)
+    //})
+})

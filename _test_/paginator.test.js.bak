@@ -74,7 +74,9 @@ describe('testing paginator',()=>{
         })
         done()
     },40000)
-
+    afterAll(async()=>{
+        await browser.close()
+    })
      //########################################TESTS START##################################################
      
     test('test for active class',async (done)=>{

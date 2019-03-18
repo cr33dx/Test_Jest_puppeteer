@@ -1,21 +1,18 @@
 const fetch = require('node-fetch')
-var arr = []
-let url = "https://apigateway-service-test.apps.actionable-science.com/api/v1/02c597aa-e055-4359-ba37-baef2df220ec/qna/qnaRecords?limit=4&page=2&search=&sortName=1&sortOrder=desc&filter=null&filterByCategoryArr=&type=qna&ts="
-fetch(url,{
-  method:"GET",
-  headers:{
-     "Authorization" : "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfNEhqcmtjdmlzODV0aTY0VXc0SFhaN0wzd2ZqVnMtRVpYQVYzb0tvQ1BBIn0.eyJqdGkiOiJhOGM1YjBjNi1iMTA4LTQxZjItOTI1NS1kM2EwZjNiZTM0YTIiLCJleHAiOjE1NDk1MzczNzcsIm5iZiI6MCwiaWF0IjoxNTQ5NTE1Nzc5LCJpc3MiOiJodHRwczovL2ZlZGVyYXRpb24tc3RzLmFwcHMuYWN0aW9uYWJsZS1zY2llbmNlLmNvbS9hdXRoL3JlYWxtcy9hbnVqIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjcxYWIyYWM2LWNkMDEtNDA2MC1iNTkxLTJjZTI4YjYyOWU0YSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWludWktc2VydmljZSIsIm5vbmNlIjoiYzZmOGVhYzgtZTQyOC00MDdmLTg4MDAtMzlhZDNkZmI2OWI3IiwiYXV0aF90aW1lIjoxNTQ5NTE1Nzc3LCJzZXNzaW9uX3N0YXRlIjoiYTJlMmNiZTItNDExZC00NjRiLWIxNDUtMWNlMjA3NmU5MTJlIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJVc2VyIEFkbWluIiwiYWdlbnQiLCJjdXN0b21lcl9hbmFseXN0Iiwib2ZmbGluZV9hY2Nlc3MiLCJzdXBwb3J0X3VzZXIiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImJvdF9hbmFseXN0IiwidXNlciIsInFuYV9hbmFseXN0IiwidGlja2V0aW5nX2FkbWluIiwiYWdlbnRfYWRtaW4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiYW51aiBhbnVqIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW51c2VyIiwiZ2l2ZW5fbmFtZSI6ImFudWoiLCJmYW1pbHlfbmFtZSI6ImFudWoiLCJlbWFpbCI6ImFudWpAeW9wbWFpbC5jb20ifQ.Xdt-D_8vPvYE42Q3lHhza2zzn1JPqQwAbU8iujcT2kzV1g9pqHm8TK5oex4KwHlyC9OlhSq0Mh_mIMR-7JSSjamwehAOne-eq8NrFmqA-TMKiT8spE1ZsOfeI6WjjngeRMZpColMwxyojQlqj4qU-h0T1F7Uv0Q2QFoID-__KSfLQS1eWrZq09nBUe8iBdhdWerSWnvRvIdb9_StGCwzSpvjr_FFRiaYNGupvzhRUHFk6tYjqrSv3Fq9IpQ0IGvazTsP6bgwC_F-t-rS4UgBdaucfJ-Ss8SN5UBue0yb359BxwEYGgo9OU3wsN09d22neRCXGU5GpC-KD5Y6slOJUQ"
-  }
-})
-.then(res=>res.json())
-.then(json=>{
-      json.data.map((data)=>{
-        arr.push(data.questions)
-      })
-      return arr
-})
-.then(arr => {
-  exports.data = arr
-})
 
 
+async function hello(){
+    let fc = await fetch(`https://apigateway-service-test.apps.actionable-science.com/api/v1/${process.env.tenant_id}/train?$filter=status eq 'Active'&$top=1&$orderby=id desc`,{
+        method:'get',
+        headers: new fetch.Headers({
+            "Content-Type": "application/json",
+            "Authorization": `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ2ZnlTTDFGLVJwTmxVaEh3X1FETi1pNVpHNFJWUWo3ZGJ0UU1rVXoxUGcwIn0.eyJqdGkiOiJlOTA5M2Q3Ny1kMzI5LTQ0MGUtYWRlMi0yMWIwYTU4Njc2ZGEiLCJleHAiOjE1NTI5MDkwOTMsIm5iZiI6MCwiaWF0IjoxNTUyODg3NDk4LCJpc3MiOiJodHRwczovL2ZlZGVyYXRpb24tc3RzLXRlc3QuYXBwcy5hY3Rpb25hYmxlLXNjaWVuY2UuY29tL2F1dGgvcmVhbG1zL205MTkxIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjE1ZGU1YWYwLWI4MTAtNGRmNC05NTY4LWQyNWNhY2Y0MmVmNCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWludWktc2VydmljZSIsIm5vbmNlIjoiNmI0YmJiMGEtNzk1Yi00Mzc3LTgxZjktZWJjM2ZmYTM5NjZjIiwiYXV0aF90aW1lIjoxNTUyODg3NDkzLCJzZXNzaW9uX3N0YXRlIjoiOGVkYzkxNWItYTExMy00ZWI3LWEyYjktMTA5MGM4NjI3YTllIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJCb3QgQW5hbHlzdCIsIlVzZXIgQWRtaW4iLCJBZ2VudCIsImFnZW50IiwiVXNlciIsIlN1cHBvcnQgVXNlciIsInN1cHBvcnRfdXNlciIsInRpY2tldGluZ19hZG1pbiIsIlRpY2tldGluZyBBZG1pbiIsImN1c3RvbWVyX2FuYWx5c3QiLCJvZmZsaW5lX2FjY2VzcyIsImJvdF9hbmFseXN0IiwiQWdlbnQgQWRtaW4iLCJ1bWFfYXV0aG9yaXphdGlvbiIsInFuYV9hbmFseXN0IiwidXNlciIsImFnZW50X2FkbWluIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiTW9iaWxlIE5pbmUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbnVzZXIiLCJnaXZlbl9uYW1lIjoiTW9iaWxlIiwiZmFtaWx5X25hbWUiOiJOaW5lIiwiZW1haWwiOiJtOTE5MUB5b3BtYWlsLmNvbSJ9.qpbqprXoRSUsxmfXmRldXTww8I21ZOfHyVP3HzHEZU3wdqxXvQeLuPNHfw1rciTzXulBfLZpc7puFbitGjQGyzYto_r-ekHpwzyGAay4Dbtu_-zfSHQ2_pSOY6LWRmKx2_Ng94qRis2XXNSaPBA64yaXbtM6988EEvxnVK6eejqTvVpAfMMoCAhyaa4k7CjG7snZeO9XEQuU72MnEsNOSp7Yg9hqool3aYNJCpU6KgjDCgGa-juYpo_tW-7wQpw_2obABQ8AX_GE4gGy0kOJkCEX2msqFZUdZCJcdlYhYPN7kBwpLZYLzmCiUAba2OwZkRGPCLrtstD8wjWVvukuog` 
+        })
+    })
+    let data = await fc.json()
+    let resp = (JSON.stringify(data, null, "\t"))
+    console.log(data[0].utterance)
+    return resp[0].utterance
+}
+
+hello()
